@@ -8,26 +8,14 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 import copy
-from softmax import softmax
+from utils import softmax
 
 
 
 class TrAdaBoostClassifier(object):
     '''
     A two-phase multi-class TrAdaboost providing API in sklearn style, which performs better 
-    than original TrAdaboost cause more than N/2 estimators can be used. 
-    
-    Parameters
-    ----------
-    n_source : int, number of source samples.
-    
-    n_target : int, number of target samples.
-    
-    base_estimator : weak learner with method fit(), predict(), predict_proba().
-    
-    estimator_params : tuple, parameters of base estimator.
-    
-    learning_rate : float.
+    than original TrAdaboost cause more than N/2 estimators can be utilzied. 
     
     '''
     def __init__(self,
@@ -35,13 +23,20 @@ class TrAdaBoostClassifier(object):
                  n_target,
                  base_estimator=None,
                  n_estimators=50,
-                 estimator_params=tuple(),
                  learning_rate=1,
                  min_src_err=1
                  ):
+        """
+        
+        :param n_source: int, 
+        :param n_target: int, 
+        :param base_estimator:  
+        :param n_estimators: int,
+        :param learning_rate: float,
+        :param min_src_err: float,
+        """
         self.learning_rate = learning_rate
         self.n_estimators = n_estimators
-        self.estimator_params = estimator_params
         self.base_estimator = base_estimator
         self.n_source = n_source
         self.n_target = n_target
@@ -115,6 +110,16 @@ class TrAdaBoostClassifier(object):
 
 
     def _boost(self, iboost, X, y, sample_weight, n_source, n_target):
+        """
+        
+        :param iboost: 
+        :param X: 
+        :param y: 
+        :param sample_weight: 
+        :param n_source: 
+        :param n_target: 
+        :return: 
+        """
         estimator = self._make_estimator()
         print("正在fit第",iboost,"个分类器")
 
@@ -167,6 +172,13 @@ class TrAdaBoostClassifier(object):
 
 
     def predict_proba(self,X, one_hot=False, begin = 0):
+        """
+        
+        :param X: 
+        :param one_hot: 
+        :param begin: 
+        :return: 
+        """
         proba = np.ones(shape=[len(X), self.n_classes_])
         for i in range(begin , self.n_estimators):
             # proba *= self.estimator_weights_[i] ** \
@@ -189,22 +201,6 @@ class TrAdaBoostClassifier(object):
         else: tmp = self.predict(X,begin=begin) == np.argmax(y, axis=1)
         accuracy = np.sum(tmp)/len(X)
         return accuracy
-
-
-
-    def draw_plot(self):
-        x_axis = np.arange(1, self.n_estimators + 1, 1)
-        y_axis = np.array(self.source_weight_ratio)
-        y_axis_source = np.array(self.source_weight)
-        y_axis_target = np.array(self.target_weight)
-        plt.subplot(211)
-        plt.plot(x_axis, y_axis)
-        plt.subplot(223)
-        plt.plot(x_axis, y_axis_source)
-        plt.subplot(224)
-        plt.plot(x_axis, y_axis_target)
-        plt.show()
-
 
 
     def _make_estimator(self):

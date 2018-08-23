@@ -11,7 +11,7 @@ from TrAdaboost import TrAdaBoostClassifier
 def main():
     num_train = 400
     clf = TrAdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=1),
-                               n_source=200, n_target=200, n_estimators=50, learning_rate=0.05, min_src_err=0.001)
+                               n_source=200, n_target=200, n_estimators=100, learning_rate=0.03, min_src_err=0.0005)
 
     bc = load_breast_cancer()
     print(len(bc.data))
@@ -24,7 +24,6 @@ def main():
 
     clf.fit(train_data, train_target)
     acc = clf.score_accuracy(test_data, test_target,begin=3)
-    clf.draw_plot()
     print('acc',acc)
 if __name__ == '__main__':
     main()
